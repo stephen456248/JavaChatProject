@@ -33,11 +33,9 @@ public class ClientConnection implements Runnable{
         try{
             this.outputStream = new DataOutputStream(this.socket.getOutputStream());
             this.inputStream = new DataInputStream(this.socket.getInputStream());
-            
         }catch(IOException e){}
         
     }
-    
     
     public void passMessage(String message){
         try{
@@ -51,12 +49,13 @@ public class ClientConnection implements Runnable{
             System.out.println("A client has joined the group");
             
             boolean done = false;
-            String currentLine = "";
+            String currentLine;
+            String name;
             while(!done){
                 currentLine = inputStream.readUTF();
-                this.messageBuff.add(currentLine);
                 //System.out.println(currentLine);
-                if(currentLine == "/kill"){ done = true; }
+                this.messageBuff.add(currentLine);
+                if(currentLine.equals("/kill")){ done = !done; }
             }
             socket.close();
             inputStream.close();

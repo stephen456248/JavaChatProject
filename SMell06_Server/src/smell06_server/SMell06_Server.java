@@ -2,7 +2,7 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-import static sun.net.www.http.HttpClient.New;
+//import static sun.net.www.http.HttpClient.New;
 
 public class SMell06_Server {
 
@@ -32,6 +32,7 @@ public class SMell06_Server {
             ArrayList<ClientConnection> connections = new ArrayList<ClientConnection>();
             MessageManager messageManager = new MessageManager(messageBuff, connections);
             Thread messageManagerThread = new Thread(messageManager);
+            messageManagerThread.start();
             while(true){
                 try{
                     if(server == null)
