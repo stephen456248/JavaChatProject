@@ -13,6 +13,9 @@ public class ClientConnection implements Runnable{
     ArrayList<String> messageBuff;
     DataInputStream inputStream;
     DataOutputStream outputStream;
+    int id;
+    String name = "";
+    ArrayList<ClientConnection> conns;
     
     //Make client socket
     //Set up input stream
@@ -27,14 +30,24 @@ public class ClientConnection implements Runnable{
         this.socket = socket;
     }
     
-    public ClientConnection(Socket socket, ArrayList<String> messageBuff){
+    public ClientConnection(Socket socket, ArrayList<String> messageBuff, int id, ArrayList<ClientConnection> c){
         this.socket = socket;
         this.messageBuff = messageBuff;
+        this.id = id;
+        this.conns = c;
         try{
             this.outputStream = new DataOutputStream(this.socket.getOutputStream());
             this.inputStream = new DataInputStream(this.socket.getInputStream());
         }catch(IOException e){}
         
+    }
+    
+    public int client_id(){
+        return this.id;
+    }
+    
+    public String clientName(){
+        return this.name;
     }
     
     public void passMessage(String message){
@@ -50,15 +63,16 @@ public class ClientConnection implements Runnable{
             
             boolean done = false;
             String currentLine;
-            String name;
             while(!done){
                 currentLine = inputStream.readUTF();
+                this.name = currentLine.split(" ")[0];
                 //System.out.println(currentLine);
                 this.messageBuff.add(currentLine);
-                if(currentLine.equals("/kill")){ done = !done; }
+                if(currentLine.substring(this.name.length()).trim().equals("/kill")){ done = !done; }
             }
             socket.close();
             inputStream.close();
+            conns.remove(this);
         }catch(IOException e){
             System.out.println("Error in ClientConnection");
         }

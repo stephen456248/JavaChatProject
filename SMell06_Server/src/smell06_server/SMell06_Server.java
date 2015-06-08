@@ -2,7 +2,6 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
-//import static sun.net.www.http.HttpClient.New;
 
 public class SMell06_Server {
 
@@ -33,13 +32,16 @@ public class SMell06_Server {
             MessageManager messageManager = new MessageManager(messageBuff, connections);
             Thread messageManagerThread = new Thread(messageManager);
             messageManagerThread.start();
+            int clientID = 0;
             while(true){
                 try{
                     if(server == null)
                         server = new ServerSocket(Integer.parseInt(args[1]));
                     System.out.println("Server ready");
                     System.out.println("Waiting for client......");
-                    ClientConnection newConnection = new ClientConnection(server.accept(), messageBuff);
+                    clientID++;
+                    ClientConnection newConnection = new ClientConnection(server.accept(), messageBuff, clientID, connections);
+                    
                     connections.add(newConnection);
                     new Thread(newConnection).start();
                 }catch(IOException e){
