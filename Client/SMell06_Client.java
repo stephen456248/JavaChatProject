@@ -1,13 +1,9 @@
 
-package my.Chat_GUI_JFrame;
-import java.io.BufferedReader;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Scanner;
 
 
 
@@ -17,6 +13,7 @@ public class SMell06_Client implements Runnable
     DataOutputStream outputStream;
     Thread receiveMessageThread;
     MessageManager messageManager;
+    Socket socket;
        //validate user input
        //Error msg if input notgood
        //create chat cleint and convert to string args[]
@@ -35,13 +32,13 @@ public class SMell06_Client implements Runnable
             System.out.println("Connected to " + args[0] + " via port " + args[1]);
             try
             {
-                Socket socket = new Socket(args[0], Integer.parseInt(args[1]));
+                this.socket = new Socket(args[0], Integer.parseInt(args[1]));
                 System.out.println("Attached to server.....");
-                DataInputStream inputStream = new DataInputStream(socket.getInputStream());
+                DataInputStream inputStream = new DataInputStream(this.socket.getInputStream());
                 this.messageManager = new MessageManager(inputStream);
                 this.receiveMessageThread = new Thread(this.messageManager);
                 this.receiveMessageThread.start();
-                this.outputStream = new DataOutputStream(socket.getOutputStream());
+                this.outputStream = new DataOutputStream(this.socket.getOutputStream());
                 this.inputStream = guiInput;
                 
             }catch(IOException e){
@@ -54,7 +51,8 @@ public class SMell06_Client implements Runnable
         return this.messageManager;
     }
     
-    public void run(){
+    @SuppressWarnings("deprecation")
+	public void run(){
         String line = "";
         boolean done = false;
         try{
@@ -64,6 +62,7 @@ public class SMell06_Client implements Runnable
                 this.outputStream.flush();
                 if(line.equals("/kill")) { done = !done; }
             }
+            this.socket.close();
         }catch(IOException e){}
         this.receiveMessageThread.stop();
     }

@@ -1,5 +1,5 @@
 
-package my.Chat_GUI_JFrame;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 
